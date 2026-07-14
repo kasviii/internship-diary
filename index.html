@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mochi — Internship Diary</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Nunito = same rounded font as the login page. Kalam = a handwritten font,
+     used only for the date/notes so the diary feels journaled, not typed. -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   Same color-variable system as the Mochi login page, so this
+   page can drop straight into the same site and feel identical.
+   Two new variables added at the bottom of each block just for
+   the diary (ribbon/tape/paper colors).
+   ========================================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page:        #f3dfa7;
+    --bg-input:       #FFFFFF;
+    --border-input:   #4A8C72;
+    --text-primary:   #2C2418;
+    --text-secondary: #7A6A56;
+    --text-label:     #3A6B52;
+    --accent-coral:   #c0694c;
+    --btn-bg:         #3A6B52;
+    --btn-text:       #FFFFFF;
+    --toggle-track:   #d3c090;
+    --toggle-thumb:   #3A6B52;
+    --header-bg:      #ecd096;
+    --input-shadow:   rgba(74,140,114,0.15);
+    /* diary-only additions */
+    --ribbon:         #3A6B52;   /* filmstrip track color */
+    --ribbon-hole:     #f3dfa7;  /* sprocket holes = page color, so they look "cut out" */
+    --paper:          #FFFDF7;   /* polaroid / note paper */
+    --tape:           #E8A838;   /* washi-tape gold accent */
+    --paper-shadow:   rgba(44,36,24,0.18);
+  }
+
+  [data-theme="dark"] {
+    --bg-page:        #36312a;
+    --bg-input:       #2A2318;
+    --border-input:   #5DCAA5;
+    --text-primary:   #F0E8D5;
+    --text-secondary: #A89880;
+    --text-label:     #5DCAA5;
+    --accent-coral:   #F0997B;
+    --btn-bg:         #5DCAA5;
+    --btn-text:       #1C1812;
+    --toggle-track:   #4c4436;
+    --toggle-thumb:   #5DCAA5;
+    --header-bg:      #24221e;
+    --input-shadow:   rgba(93,202,165,0.1);
+    --ribbon:         #5DCAA5;
+    --ribbon-hole:    #36312a;
+    --paper:          #2A2318;
+    --tape:           #FAC775;
+    --paper-shadow:   rgba(0,0,0,0.4);
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ---- HEADER (identical to login page, minus the tabs) ---- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--header-bg);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 60px;
+    transition: background 0.9s;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .hamburger { cursor: pointer; display: flex; align-items: center; }
+  .hamburger img { height: 28px; width: auto; object-fit: contain; }
+  .logo img { height: 36px; width: auto; object-fit: contain; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .theme-toggle {
+    display: flex; align-items: center;
+    background: var(--toggle-track);
+    border-radius: 20px; padding: 3px; cursor: pointer; gap: 2px;
+    transition: background 0.3s; border: none; outline: none;
+  }
+  .theme-toggle .icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s;
+  }
+  .theme-toggle .icon img { width: 24px; height: 24px; object-fit: contain; }
+  .theme-toggle .icon.active { background: var(--toggle-thumb); }
+
+  /* ---- MAIN ---- */
+  main { min-height: 100vh; padding: 96px 24px 48px; display: flex; justify-content: center; }
+  .diary-wrap { width: 100%; max-width: 880px; }
+
+  /* ---- HEAD: mochi badge + big handwritten date ---- */
+  .diary-head { display: flex; align-items: center; gap: 18px; margin-bottom: 26px; }
+
+  .mochi-badge { position: relative; width: 74px; height: 86px; flex: 0 0 auto; }
+  .mochi-badge img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+  #badgeBase { z-index: 1; }
+  #badgeEyes { z-index: 2; }
+  #badgeExpr { z-index: 3; opacity: 0; transition: opacity 0.25s; }
+  #badgeExpr.visible { opacity: 1; }
+
+  .diary-heading { flex: 1; }
+  .diary-title {
+    font-family: 'Kalam', cursive; font-weight: 700;
+    font-size: 40px; line-height: 1; color: var(--text-primary);
+    transition: color 0.3s;
+  }
+  .diary-sub { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+  .diary-sub b { color: var(--text-label); }
+
+  /* ---- FILMSTRIP TIMELINE ----
+     A ribbon styled like a strip of camera film: sprocket holes along
+     the top/bottom, a big pin-shaped thumb you drag to jump between days. */
+  .filmstrip-wrap { margin-bottom: 22px; }
+
+  input[type="range"].date-slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 34px; background: transparent; cursor: pointer;
+    outline: none;
+  }
+  /* the track: solid ribbon color + two rows of small "sprocket hole" dots
+     built purely from a repeating radial-gradient, no images needed */
+  input[type="range"].date-slider::-webkit-slider-runnable-track {
+    height: 34px; border-radius: 8px;
+    background:
+      radial-gradient(circle 4px, var(--ribbon-hole) 98%, transparent 100%) repeat-x left 6px / 22px 100%,
+      radial-gradient(circle 4px, var(--ribbon-hole) 98%, transparent 100%) repeat-x left 6px / 22px 100%,
+      var(--ribbon);
+    background-position: 6px 6px, 6px 28px, 0 0;
+    background-size: 22px 8px, 22px 8px, 100% 100%;
+    background-repeat: repeat-x, repeat-x, no-repeat;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+    transition: background-color 0.3s;
+  }
+  input[type="range"].date-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 26px; height: 26px; margin-top: 4px;
+    border-radius: 50%;
+    background: var(--tape);
+    border: 3px solid var(--paper);
+    box-shadow: 0 2px 6px var(--paper-shadow);
+    cursor: grab;
+  }
+  input[type="range"].date-slider::-moz-range-track {
+    height: 34px; border-radius: 8px; background: var(--ribbon);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+  }
+  input[type="range"].date-slider::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--tape); border: 3px solid var(--paper);
+    box-shadow: 0 2px 6px var(--paper-shadow); cursor: grab;
+  }
+
+  /* quick-jump week labels under the ribbon */
+  .week-ticks { display: flex; justify-content: space-between; margin-top: 8px; padding: 0 2px; }
+  .week-tick {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700;
+    color: var(--text-secondary); letter-spacing: 0.3px;
+    padding: 3px 4px; border-radius: 6px; transition: color 0.2s, background 0.2s;
+  }
+  .week-tick:hover, .week-tick:focus-visible { color: var(--text-label); background: var(--input-shadow); }
+  .week-tick.on-month-start { color: var(--text-label); }
+
+  /* ---- ENTRY CARD: polaroid carousel + note ---- */
+  .entry-card {
+    display: flex; gap: 26px; align-items: flex-start;
+    background: var(--bg-input); border-radius: 22px;
+    padding: 24px; box-shadow: 0 6px 20px var(--input-shadow);
+    transition: background 0.3s;
+  }
+
+  /* -- polaroid photo -- */
+  .polaroid-col { flex: 0 0 auto; width: 240px; }
+  .polaroid {
+    background: var(--paper); padding: 12px 12px 34px; border-radius: 4px;
+    box-shadow: 0 8px 18px var(--paper-shadow);
+    transform: rotate(-2deg); transition: transform 0.2s, background 0.3s;
+  }
+  .polaroid:hover { transform: rotate(0deg); }
+  .photo-frame { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; background: #ddd; }
+  .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .polaroid-caption {
+    font-family: 'Kalam', cursive; font-size: 15px; text-align: center;
+    color: var(--text-primary); margin-top: 10px;
+  }
+
+  .carousel-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 12px; }
+  .carousel-controls button {
+    width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--toggle-track); color: var(--text-label); font-size: 16px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  .carousel-controls button:hover { background: var(--btn-bg); color: var(--btn-text); }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--toggle-track); transition: background 0.2s, transform 0.2s; }
+  .dot.active { background: var(--text-label); transform: scale(1.3); }
+
+  /* -- note column -- */
+  .note-col { flex: 1; min-width: 0; }
+  .note-label {
+    display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text-label); margin-bottom: 6px;
+  }
+  .note-text {
+    font-family: 'Kalam', cursive; font-size: 19px; line-height: 1.5;
+    color: var(--text-primary); margin-bottom: 18px;
+  }
+  .mood-tag {
+    display: inline-block; padding: 6px 14px; border-radius: 20px;
+    background: var(--input-shadow); color: var(--text-label);
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+  }
+
+  @media (max-width: 620px) {
+    .entry-card { flex-direction: column; align-items: center; }
+    .polaroid-col { width: 220px; }
+    .diary-title { font-size: 32px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="hamburger"><img src="menu.png" alt="Menu"></span>
+    <div class="logo"><img src="Logo.png" alt="Mochi"></div>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <span class="icon active" id="sunIcon"><img src="SunToggle.png" alt="Light"></span>
+      <span class="icon" id="moonIcon"><img src="MoonToggle.png" alt="Dark"></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="diary-wrap">
+
+    <!-- Mochi badge + current date -->
+    <div class="diary-head">
+      <div class="mochi-badge" id="mochiBadge">
+        <img id="badgeBase" src="original.png" alt="">
+        <img id="badgeEyes" src="eyes.png" alt="">
+        <img id="badgeExpr" src="" alt="">
+      </div>
+      <div class="diary-heading">
+        <div class="diary-title" id="dateTitle">June 1</div>
+        <div class="diary-sub">Day <b id="dayNum">1</b> of <b>61</b> · Internship progress diary</div>
+      </div>
+    </div>
+
+    <!-- Filmstrip timeline: drag the pin, or tap a week label to jump -->
+    <div class="filmstrip-wrap">
+      <input type="range" class="date-slider" id="dateSlider" min="0" max="60" step="1" value="0"
+             aria-label="Select a diary date between June 1 and July 31">
+      <div class="week-ticks" id="weekTicks"></div>
+    </div>
+
+    <!-- Entry: rotating polaroid carousel + handwritten note -->
+    <div class="entry-card">
+      <div class="polaroid-col">
+        <div class="polaroid">
+          <div class="photo-frame"><img id="photoImg" src="" alt="Diary photo"></div>
+          <div class="polaroid-caption" id="photoCaption">Day 1 · Photo 1</div>
+        </div>
+        <div class="carousel-controls">
+          <button id="prevPhoto" aria-label="Previous photo">‹</button>
+          <div class="dots" id="photoDots"></div>
+          <button id="nextPhoto" aria-label="Next photo">›</button>
+        </div>
+      </div>
+      <div class="note-col">
+        <span class="note-label">What I worked on</span>
+        <p class="note-text" id="noteText"></p>
+        <span class="note-label">Mood</span>
+        <div class="mood-tag" id="moodTag"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+/* ==========================================================
+   HOW TO PLUG IN YOUR REAL INTERNSHIP DATA LATER
+   --------------------------------------------------
+   Everything below is generated automatically as PLACEHOLDER
+   content so the page works right now. Once you know exactly
+   what you want to show, just replace the body of buildDay()
+   near the bottom with your real notes/photos, e.g.:
+
+     if (dayNum === 5) return {
+       note: "Set up the dev environment and read the codebase.",
+       mood: 'default',
+       photos: ["photos/day5-1.jpg", "photos/day5-2.jpg"]
+     };
+
+   Anything you don't override keeps using the auto-generated
+   placeholder, so you can fill in real days gradually.
+   ========================================================== */
+
+// ---- DATE RANGE ----
+const START = new Date(2026, 5, 1);   // June 1  (month index 5 = June)
+const END   = new Date(2026, 6, 31);  // July 31
+const TOTAL_DAYS = Math.round((END - START) / 86400000) + 1; // = 61
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function dateAt(i) {
+  const d = new Date(START);
+  d.setDate(d.getDate() + i);
+  return d;
+}
+function formatLong(d) { return `${MONTH_NAMES[d.getMonth()]==='Jun'?'June':'July'} ${d.getDate()}`; }
+function formatShort(d) { return `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`; }
+
+// ---- PLACEHOLDER PHOTO GENERATOR ----
+// Builds a simple SVG "photo" on the fly (no external image files needed
+// yet) so the carousel has something to show. Swap these src strings for
+// real file paths once you have your pictures.
+function placeholderPhoto(dayNum, photoIndex) {
+  const hue = (dayNum * 11 + photoIndex * 40) % 360;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="hsl(${hue},55%,72%)"/>
+          <stop offset="100%" stop-color="hsl(${(hue+50)%360},55%,55%)"/>
+        </linearGradient>
+      </defs>
+      <rect width="400" height="400" fill="url(#g)"/>
+      <circle cx="200" cy="160" r="70" fill="rgba(255,255,255,0.25)"/>
+      <text x="200" y="330" font-family="Nunito, sans-serif" font-size="26" font-weight="700"
+            fill="rgba(255,255,255,0.9)" text-anchor="middle">Day ${dayNum} · Photo ${photoIndex + 1}</text>
+    </svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+// ---- MOOD BY DATE ----
+// Placeholder rule: first/last day = excited, weekends = sleepy (no work),
+// everything else = a normal focused day. Replace with real moods later.
+function moodFor(d, dayNum) {
+  if (dayNum === 1 || dayNum === TOTAL_DAYS) return 'surprised';
+  const dow = d.getDay(); // 0 = Sunday, 6 = Saturday
+  if (dow === 0 || dow === 6) return 'sleepy';
+  return 'default';
+}
+const MOOD_LABEL = {
+  default:   '🙂 Focused',
+  sleepy:    '💤 Slow day / weekend',
+  surprised: '🎉 Milestone!'
+};
+// Maps mood -> expression image, same filenames as the login page's mochi
+const MOOD_IMG = {
+  default:   '',            // no overlay needed, base face is enough
+  sleepy:    'sleepy.png',
+  surprised: 'surprised.png'
+};
+
+const PLACEHOLDER_NOTES = [
+  "Placeholder note — describe what you learned or built on this day.",
+  "Placeholder note — jot down a task, a bug fixed, or a meeting takeaway.",
+  "Placeholder note — add a quick reflection or a small win from today.",
+];
+
+// ---- BUILD ALL 61 DAYS ----
+function buildDay(i) {
+  const d = dateAt(i);
+  const dayNum = i + 1;
+  return {
+    date: d,
+    label: formatLong(d),
+    dayNum,
+    mood: moodFor(d, dayNum),
+    note: PLACEHOLDER_NOTES[i % PLACEHOLDER_NOTES.length],
+    photos: [
+      placeholderPhoto(dayNum, 0),
+      placeholderPhoto(dayNum, 1),
+      placeholderPhoto(dayNum, 2)
+    ]
+  };
+}
+const diaryData = Array.from({ length: TOTAL_DAYS }, (_, i) => buildDay(i));
+
+// ---- GRAB ELEMENTS ----
+const dateSlider   = document.getElementById('dateSlider');
+const weekTicks    = document.getElementById('weekTicks');
+const dateTitle    = document.getElementById('dateTitle');
+const dayNumEl     = document.getElementById('dayNum');
+const noteText     = document.getElementById('noteText');
+const moodTag      = document.getElementById('moodTag');
+const photoImg     = document.getElementById('photoImg');
+const photoCaption = document.getElementById('photoCaption');
+const photoDots    = document.getElementById('photoDots');
+const badgeEyes    = document.getElementById('badgeEyes');
+const badgeExpr    = document.getElementById('badgeExpr');
+
+dateSlider.max = TOTAL_DAYS - 1;
+
+// ---- WEEK QUICK-JUMP LABELS (every 7th day) ----
+for (let i = 0; i < TOTAL_DAYS; i += 7) {
+  const btn = document.createElement('button');
+  btn.className = 'week-tick';
+  btn.textContent = formatShort(diaryData[i].date);
+  btn.addEventListener('click', () => {
+    dateSlider.value = i;
+    selectDate(i, /*immediateCarousel*/ true);
+  });
+  weekTicks.appendChild(btn);
+}
+
+// ---- CAROUSEL STATE ----
+let currentDay = 0;
+let currentPhoto = 0;
+let carouselTimer = null;
+
+function stopCarousel() { clearInterval(carouselTimer); carouselTimer = null; }
+function startCarousel() {
+  stopCarousel();
+  carouselTimer = setInterval(() => showPhoto(currentPhoto + 1), 3200);
+}
+
+function renderDots() {
+  photoDots.innerHTML = '';
+  diaryData[currentDay].photos.forEach((_, idx) => {
+    const dot = document.createElement('span');
+    dot.className = 'dot' + (idx === currentPhoto ? ' active' : '');
+    photoDots.appendChild(dot);
+  });
+}
+
+function showPhoto(index) {
+  const photos = diaryData[currentDay].photos;
+  currentPhoto = (index + photos.length) % photos.length;
+  photoImg.src = photos[currentPhoto];
+  photoCaption.textContent = `Day ${diaryData[currentDay].dayNum} · Photo ${currentPhoto + 1}`;
+  renderDots();
+}
+
+// ---- BADGE FACE: blink + idle-sleepy state machine ----
+// Ported from the login page's mochi. Eye-tracking was left out on purpose
+// (there's no cursor-following context here), but blinking and the 10s
+// idle-sleepy timeout work exactly the same way.
+//
+// dayMood ('default' | 'sleepy' | 'surprised') comes from the selected date.
+// On 'sleepy'/'surprised' days the face is locked to that expression, same
+// as the login page locks the face while typing a password — no blinking.
+// On 'default' days, the badge blinks every 3-6s and dozes off after 10s
+// of no mouse/keyboard activity anywhere on the page.
+let dayMood = 'default';
+let isIdleSleepy = false;
+let badgeBlinkTimer = null;
+let badgeIdleTimer = null;
+
+function pause(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function updateBadgeFace() {
+  if (dayMood !== 'default') {
+    // Persistent day-mood expression (weekend / milestone) — no blinking.
+    clearTimeout(badgeBlinkTimer);
+    badgeEyes.style.display = 'none';
+    const src = MOOD_IMG[dayMood];
+    if (src) { badgeExpr.src = src; badgeExpr.classList.add('visible'); }
+  } else if (isIdleSleepy) {
+    // Dozed off from inactivity, even though today is a normal work day.
+    clearTimeout(badgeBlinkTimer);
+    badgeEyes.style.display = 'none';
+    badgeExpr.src = 'sleepy.png';
+    badgeExpr.classList.add('visible');
+  } else {
+    // Normal awake state — show open eyes and start blinking.
+    badgeEyes.style.display = '';
+    badgeExpr.classList.remove('visible');
+    scheduleBadgeBlink();
+  }
+}
+
+function scheduleBadgeBlink() {
+  clearTimeout(badgeBlinkTimer);
+  badgeBlinkTimer = setTimeout(doBadgeBlink, 3000 + Math.random() * 3000);
+}
+async function doBadgeBlink() {
+  if (dayMood !== 'default' || isIdleSleepy) return; // conditions changed, stop blinking
+  await flashBadgeBlink();
+  if (Math.random() < 0.25) { await pause(60); await flashBadgeBlink(); } // occasional double-blink
+  if (dayMood === 'default' && !isIdleSleepy) scheduleBadgeBlink();
+}
+function flashBadgeBlink() {
+  return new Promise(res => {
+    badgeEyes.style.display = 'none';
+    badgeExpr.src = 'blink.png';
+    badgeExpr.classList.add('visible');
+    setTimeout(() => {
+      badgeExpr.classList.remove('visible');
+      if (dayMood === 'default' && !isIdleSleepy) badgeEyes.style.display = '';
+      res();
+    }, 140);
+  });
+}
+
+function startBadgeIdleTimer() {
+  clearTimeout(badgeIdleTimer);
+  badgeIdleTimer = setTimeout(() => {
+    if (dayMood === 'default') { isIdleSleepy = true; updateBadgeFace(); }
+  }, 10000); // 10 seconds
+}
+function resetBadgeIdle() {
+  if (isIdleSleepy) { isIdleSleepy = false; updateBadgeFace(); }
+  startBadgeIdleTimer();
+}
+document.addEventListener('mousemove', resetBadgeIdle);
+document.addEventListener('keydown', resetBadgeIdle);
+
+// ---- SELECT A DATE ----
+// immediateCarousel = true means "the user just stopped here" (release drag,
+// or a direct click) so the carousel should start rotating right away.
+function selectDate(index, immediateCarousel) {
+  currentDay = index;
+  const day = diaryData[index];
+
+  dateTitle.textContent = day.label;
+  dayNumEl.textContent = day.dayNum;
+  noteText.textContent = day.note;
+  moodTag.textContent = MOOD_LABEL[day.mood];
+
+  currentPhoto = 0;
+  showPhoto(0);
+
+  // Picking a date counts as activity: reset idle/blink state for the badge.
+  dayMood = day.mood;
+  isIdleSleepy = false;
+  updateBadgeFace();
+  startBadgeIdleTimer();
+
+  if (immediateCarousel) startCarousel(); else stopCarousel();
+}
+
+// ---- SLIDER EVENTS ----
+// 'input' fires continuously while dragging -> freeze the carousel so it
+// doesn't spin while the user is still scrubbing through dates.
+dateSlider.addEventListener('input', () => selectDate(Number(dateSlider.value), false));
+// 'change' fires once, when the user lets go -> that's "stopping" on a date,
+// so start the photo carousel rotating for that day.
+dateSlider.addEventListener('change', () => selectDate(Number(dateSlider.value), true));
+
+// ---- MANUAL PHOTO ARROWS ----
+document.getElementById('prevPhoto').addEventListener('click', () => { showPhoto(currentPhoto - 1); startCarousel(); });
+document.getElementById('nextPhoto').addEventListener('click', () => { showPhoto(currentPhoto + 1); startCarousel(); });
+
+// ---- DARK MODE TOGGLE (same as login page) ----
+const html = document.documentElement;
+const sunIcon = document.getElementById('sunIcon');
+const moonIcon = document.getElementById('moonIcon');
+function applyTheme(dark) {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  sunIcon.classList.toggle('active', !dark);
+  moonIcon.classList.toggle('active', dark);
+}
+applyTheme(localStorage.getItem('theme') === 'dark');
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  applyTheme(!isDark);
+  localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+});
+
+// ---- START ----
+selectDate(0, true); // land on June 1, carousel already rotating
+</script>
+</body>
+</html>
