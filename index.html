@@ -69,6 +69,20 @@
     font-weight: 600;
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
+    cursor: none; /* hide the native arrow — our own cursor image replaces it */
+  }
+  a, button, input { cursor: none; } /* form elements default back to pointer/text otherwise */
+
+  /* ---- CUSTOM CURSOR ----
+     A little rodent that follows the mouse everywhere. Positioned with
+     left/top + a translate offset so its center sits on the real pointer. */
+  #cursorMouse {
+    position: fixed; top: 0; left: 0;
+    width: 46px; height: 46px;
+    pointer-events: none; /* never blocks clicks on what's underneath */
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s linear;
   }
 
   /* ---- HEADER (identical to login page, minus the tabs) ---- */
@@ -80,9 +94,12 @@
     transition: background 0.9s;
   }
   .header-left { display: flex; align-items: center; gap: 14px; }
-  .hamburger { cursor: pointer; display: flex; align-items: center; }
-  .hamburger img { height: 28px; width: auto; object-fit: contain; }
-  .logo img { height: 36px; width: auto; object-fit: contain; }
+  .demo-badge {
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px;
+    letter-spacing: 2.5px; color: var(--text-label);
+    background: var(--toggle-track); padding: 6px 16px; border-radius: 20px;
+    transition: background 0.3s, color 0.3s;
+  }
   .header-right { display: flex; align-items: center; gap: 16px; }
 
   .theme-toggle {
@@ -110,7 +127,7 @@
   .mochi-badge img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
   #badgeBase { z-index: 1; }
   #badgeEyes { z-index: 2; }
-  #badgeExpr { z-index: 3; opacity: 0; transition: opacity 0.25s; }
+  #badgeExpr { z-index: 3; opacity: 0; }
   #badgeExpr.visible { opacity: 1; }
 
   .diary-heading { flex: 1; }
@@ -239,10 +256,11 @@
 </head>
 <body>
 
+<img id="cursorMouse" src="cursor-hamster.png" alt="">
+
 <header>
   <div class="header-left">
-    <span class="hamburger"><img src="menu.png" alt="Menu"></span>
-    <div class="logo"><img src="Logo.png" alt="Mochi"></div>
+    <div class="demo-badge">DEMO</div>
   </div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -529,6 +547,43 @@ function resetBadgeIdle() {
 }
 document.addEventListener('mousemove', resetBadgeIdle);
 document.addEventListener('keydown', resetBadgeIdle);
+
+// ---- CUSTOM CURSOR + PROXIMITY DISTRESS ----
+// The cursor image follows the mouse everywhere. If it gets close to the
+// badge, Mochi gets spooked (mad.png) — this overrides blinking and idle-
+// sleepy while it's active, and hands control back to updateBadgeFace()
+// the moment the cursor backs off.
+const cursorMouse = document.getElementById('cursorMouse');
+const mochiBadge  = document.getElementById('mochiBadge');
+const DISTRESS_RADIUS = 130; // px — how close the cursor has to get
+let isDistressed = false;
+
+function showDistress() {
+  clearTimeout(badgeBlinkTimer);
+  badgeEyes.style.display = 'none';
+  badgeExpr.src = 'mad.png';
+  badgeExpr.classList.add('visible');
+}
+
+document.addEventListener('mousemove', (e) => {
+  // move the cursor image
+  cursorMouse.style.left = e.clientX + 'px';
+  cursorMouse.style.top  = e.clientY + 'px';
+
+  // measure distance to the badge's center
+  const rect = mochiBadge.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+
+  if (dist < DISTRESS_RADIUS && !isDistressed) {
+    isDistressed = true;
+    showDistress();
+  } else if (dist >= DISTRESS_RADIUS && isDistressed) {
+    isDistressed = false;
+    updateBadgeFace(); // hand control back to day-mood / idle-sleepy / blink
+  }
+});
 
 // ---- SELECT A DATE ----
 // immediateCarousel = true means "the user just stopped here" (release drag,
