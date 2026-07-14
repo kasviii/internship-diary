@@ -237,11 +237,24 @@
     font-family: 'Kalam', cursive; font-size: 19px; line-height: 1.5;
     color: var(--text-primary); margin-bottom: 18px;
   }
+  .note-text code {
+    font-family: 'Nunito', sans-serif; font-size: 0.75em; font-weight: 700;
+    background: var(--input-shadow); color: var(--text-label);
+    padding: 1px 6px; border-radius: 6px;
+  }
   .mood-tag {
     display: inline-block; padding: 6px 14px; border-radius: 20px;
     background: var(--input-shadow); color: var(--text-label);
     font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
   }
+  .links-wrap { display: none; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .entry-link {
+    text-decoration: none; font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--btn-text);
+    background: var(--btn-bg); padding: 7px 14px; border-radius: 16px;
+    transition: opacity 0.2s;
+  }
+  .entry-link:hover { opacity: 0.85; }
 
   @media (max-width: 620px) {
     .entry-card { flex-direction: column; align-items: center; }
@@ -300,7 +313,7 @@
           <div class="photo-frame"><img id="photoImg" src="" alt="Diary photo"></div>
           <div class="polaroid-caption" id="photoCaption">Day 1 · Photo 1</div>
         </div>
-        <div class="carousel-controls">
+        <div class="carousel-controls" id="carouselCtrl">
           <button id="prevPhoto" aria-label="Previous photo">‹</button>
           <div class="dots" id="photoDots"></div>
           <button id="nextPhoto" aria-label="Next photo">›</button>
@@ -311,6 +324,7 @@
         <p class="note-text" id="noteText"></p>
         <span class="note-label">Mood</span>
         <div class="mood-tag" id="moodTag"></div>
+        <div class="links-wrap" id="linksWrap"></div>
       </div>
     </div>
 
@@ -400,10 +414,61 @@ const PLACEHOLDER_NOTES = [
   "Placeholder note — add a quick reflection or a small win from today.",
 ];
 
+// A simple "document" card used whenever a day has notes/links but no
+// photos yet, so the polaroid slot never looks broken or empty.
+function docPlaceholderSVG(caption) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+      <rect width="400" height="400" fill="#e7dcc0"/>
+      <rect x="90" y="60" width="220" height="280" rx="10" fill="#fffdf7" stroke="#c9b98a" stroke-width="3"/>
+      <line x1="120" y1="120" x2="280" y2="120" stroke="#c9b98a" stroke-width="6"/>
+      <line x1="120" y1="160" x2="280" y2="160" stroke="#c9b98a" stroke-width="6"/>
+      <line x1="120" y1="200" x2="240" y2="200" stroke="#c9b98a" stroke-width="6"/>
+      <text x="200" y="365" font-family="Nunito, sans-serif" font-size="20" font-weight="700"
+            fill="#7a6a56" text-anchor="middle">${caption}</text>
+    </svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
 // ---- BUILD ALL 61 DAYS ----
 function buildDay(i) {
   const d = dateAt(i);
   const dayNum = i + 1;
+
+  // ---- REAL PROGRESS, in place of placeholders, as it comes in ----
+  if (dayNum === 1) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Research day — looked into existing food-sorting and match-3 style mobile games: core mechanics, level pacing, and monetization patterns, before starting the design doc.",
+      links: [{ label: '📄 Research notes', url: 'https://docs.google.com/document/d/1RhMnqDutOYF4iP57AK9ZbfcG7g7M5YX7WwIKoidhSqk/edit?usp=sharing' }],
+      photos: [], photoCaptions: []
+    };
+  }
+  if (dayNum === 2) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Turned yesterday's research into a full Game Design Document — core loop, food categories per episode, level progression tables, monetization plan, and the 4-week dev roadmap.",
+      links: [{ label: '📄 Game Design Document', url: 'https://docs.google.com/document/d/1bFlVpa68chdKFJUJwH9425kW1z-rvMaAWVya1qfArrg/edit?usp=sharing' }],
+      photos: [], photoCaptions: []
+    };
+  }
+  if (dayNum === 3) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "<b>Setup</b> — Unity 6.3 LTS installed with Android build support, VS Code connected as the script editor, " +
+        "project folders organized (Scripts, Prefabs, Sprites, Audio, Levels, Fonts), GitHub repo created and pushed." +
+        "<br><br><b>Core architecture</b> — <code>LevelData.cs</code> data model matching the GDD's JSON schema, " +
+        "<code>level_01.json</code> as the first data-driven level, <code>GameBoard.cs</code> loading JSON into a grid, " +
+        "<code>FoodSlot.cs</code> handling drag-and-swap (almost working)." +
+        "<br><br>✅ JSON loader &nbsp; ✅ Grid renders &nbsp; ✅ Food colors display correctly" +
+        "<br>🛠️ One thing left for tomorrow: switch Active Input Handling to \"Both\" in Project Settings — a one-dropdown fix.",
+      photos: ['day3-unity-error.png', 'day3-github-repo.png'],
+      photoCaptions: ['Blocked here — Input System setting, fixed in one dropdown', 'GitHub repo set up and pushed']
+    };
+  }
+
+  // ---- PLACEHOLDER (every other day, until real progress replaces it) ----
   return {
     date: d,
     label: formatLong(d),
@@ -426,9 +491,11 @@ const dateTitle    = document.getElementById('dateTitle');
 const dayNumEl     = document.getElementById('dayNum');
 const noteText     = document.getElementById('noteText');
 const moodTag      = document.getElementById('moodTag');
+const linksWrap    = document.getElementById('linksWrap');
 const photoImg     = document.getElementById('photoImg');
 const photoCaption = document.getElementById('photoCaption');
 const photoDots    = document.getElementById('photoDots');
+const carouselCtrl = document.getElementById('carouselCtrl');
 const badgeEyes    = document.getElementById('badgeEyes');
 const badgeExpr    = document.getElementById('badgeExpr');
 
@@ -449,17 +516,21 @@ for (let i = 0; i < TOTAL_DAYS; i += 7) {
 // ---- CAROUSEL STATE ----
 let currentDay = 0;
 let currentPhoto = 0;
+let currentPhotos = [];
+let currentCaptions = [];
 let carouselTimer = null;
 
 function stopCarousel() { clearInterval(carouselTimer); carouselTimer = null; }
 function startCarousel() {
   stopCarousel();
-  carouselTimer = setInterval(() => showPhoto(currentPhoto + 1), 3200);
+  if (currentPhotos.length > 1) {
+    carouselTimer = setInterval(() => showPhoto(currentPhoto + 1), 3200);
+  }
 }
 
 function renderDots() {
   photoDots.innerHTML = '';
-  diaryData[currentDay].photos.forEach((_, idx) => {
+  currentPhotos.forEach((_, idx) => {
     const dot = document.createElement('span');
     dot.className = 'dot' + (idx === currentPhoto ? ' active' : '');
     photoDots.appendChild(dot);
@@ -467,11 +538,24 @@ function renderDots() {
 }
 
 function showPhoto(index) {
-  const photos = diaryData[currentDay].photos;
-  currentPhoto = (index + photos.length) % photos.length;
-  photoImg.src = photos[currentPhoto];
-  photoCaption.textContent = `Day ${diaryData[currentDay].dayNum} · Photo ${currentPhoto + 1}`;
+  currentPhoto = (index + currentPhotos.length) % currentPhotos.length;
+  photoImg.src = currentPhotos[currentPhoto];
+  photoCaption.textContent = currentCaptions[currentPhoto]
+    || `Day ${diaryData[currentDay].dayNum} · Photo ${currentPhoto + 1}`;
   renderDots();
+}
+
+// Renders the link pills (Google Doc links etc.) under the note, if any.
+function renderLinks(links) {
+  linksWrap.innerHTML = '';
+  if (!links || !links.length) { linksWrap.style.display = 'none'; return; }
+  linksWrap.style.display = 'flex';
+  links.forEach(l => {
+    const a = document.createElement('a');
+    a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.className = 'entry-link'; a.textContent = l.label;
+    linksWrap.appendChild(a);
+  });
 }
 
 // ---- BADGE FACE: blink + idle-sleepy state machine ----
@@ -594,11 +678,22 @@ function selectDate(index, immediateCarousel) {
 
   dateTitle.textContent = day.label;
   dayNumEl.textContent = day.dayNum;
-  noteText.textContent = day.note;
-  moodTag.textContent = MOOD_LABEL[day.mood];
 
+  // Rich entries (bold/line breaks/code) use noteHTML; plain days use note.
+  if (day.noteHTML) noteText.innerHTML = day.noteHTML;
+  else noteText.textContent = day.note;
+
+  moodTag.textContent = MOOD_LABEL[day.mood];
+  renderLinks(day.links);
+
+  // If a day has no real photos yet (research/GDD days), fall back to a
+  // single "notes only" card instead of leaving the polaroid empty.
+  const hasPhotos = day.photos && day.photos.length > 0;
+  currentPhotos  = hasPhotos ? day.photos : [docPlaceholderSVG('Notes only — see links below')];
+  currentCaptions = hasPhotos ? (day.photoCaptions || []) : ['Notes only — see links below'];
   currentPhoto = 0;
   showPhoto(0);
+  carouselCtrl.style.display = currentPhotos.length > 1 ? 'flex' : 'none';
 
   // Picking a date counts as activity: reset idle/blink state for the badge.
   dayMood = day.mood;
