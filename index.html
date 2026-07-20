@@ -209,8 +209,18 @@
     transform: rotate(-2deg); transition: transform 0.2s, background 0.3s;
   }
   .polaroid:hover { transform: rotate(0deg); }
-  .photo-frame { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; background: #ddd; }
+  .photo-frame { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; background: #ddd; }
   .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ---- BIG MOCHI (used for weeks with no dev screenshots) ----
+     Same 3-layer trick as the header badge, just filling the whole
+     polaroid frame instead of a small corner icon. */
+  .big-mochi { position: absolute; inset: 0; display: none; background: var(--bg-page); }
+  .big-mochi img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+  #bigBase { z-index: 1; }
+  #bigEyes { z-index: 2; }
+  #bigExpr { z-index: 3; opacity: 0; }
+  #bigExpr.visible { opacity: 1; }
   .polaroid-caption {
     font-family: 'Kalam', cursive; font-size: 15px; text-align: center;
     color: var(--text-primary); margin-top: 10px;
@@ -310,7 +320,14 @@
     <div class="entry-card">
       <div class="polaroid-col">
         <div class="polaroid">
-          <div class="photo-frame"><img id="photoImg" src="" alt="Diary photo"></div>
+          <div class="photo-frame" id="photoFrame">
+            <img id="photoImg" src="" alt="Diary photo">
+            <div class="big-mochi" id="bigMochi">
+              <img id="bigBase" src="original.png" alt="">
+              <img id="bigEyes" src="eyes.png" alt="">
+              <img id="bigExpr" src="" alt="">
+            </div>
+          </div>
           <div class="polaroid-caption" id="photoCaption">Day 1 · Photo 1</div>
         </div>
         <div class="carousel-controls" id="carouselCtrl">
@@ -468,6 +485,20 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "This stretch (July 13–18) went into the diary tool itself — reworking its UI/UX and rewriting how each " +
+        "day's record actually gets written, so entries stay clear and clean instead of cluttered." +
+        "<br><br>No new dev screenshots this week, so here's Mochi instead, fully alive: blinking, dozing off " +
+        "after a few idle seconds, and getting spooked if that hamster wanders too close.",
+      photos: [], photoCaptions: [],
+      showBigMochi: true,
+      bigCaption: "Mochi, at full size — same blinking and hamster-shy reactions as the badge up top"
+    };
+  }
+
   // ---- PLACEHOLDER (every other day, until real progress replaces it) ----
   return {
     date: d,
@@ -498,6 +529,9 @@ const photoDots    = document.getElementById('photoDots');
 const carouselCtrl = document.getElementById('carouselCtrl');
 const badgeEyes    = document.getElementById('badgeEyes');
 const badgeExpr    = document.getElementById('badgeExpr');
+const bigMochi     = document.getElementById('bigMochi');
+const bigEyes      = document.getElementById('bigEyes');
+const bigExpr      = document.getElementById('bigExpr');
 
 dateSlider.max = TOTAL_DAYS - 1;
 
@@ -558,114 +592,122 @@ function renderLinks(links) {
   });
 }
 
-// ---- BADGE FACE: blink + idle-sleepy state machine ----
+// ---- MOCHI FACE CONTROLLER (blink + idle-sleepy + distress) ----
 // Ported from the login page's mochi. Eye-tracking was left out on purpose
-// (there's no cursor-following context here), but blinking and the 10s
-// idle-sleepy timeout work exactly the same way.
-//
-// dayMood ('default' | 'sleepy' | 'surprised') comes from the selected date.
-// On 'sleepy'/'surprised' days the face is locked to that expression, same
-// as the login page locks the face while typing a password — no blinking.
-// On 'default' days, the badge blinks every 3-6s and dozes off after 10s
-// of no mouse/keyboard activity anywhere on the page.
-let dayMood = 'default';
-let isIdleSleepy = false;
-let badgeBlinkTimer = null;
-let badgeIdleTimer = null;
-
+// (there's no cursor-following context here), but blinking, the 10s
+// idle-sleepy timeout, and a new "distress" reaction all work the same way.
+// This is a factory so the exact same behavior can drive both the small
+// header badge and the big full-size Mochi used on UI-polish weeks —
+// each gets its own independent timers and mood state.
 function pause(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function updateBadgeFace() {
-  if (dayMood !== 'default') {
-    // Persistent day-mood expression (weekend / milestone) — no blinking.
-    clearTimeout(badgeBlinkTimer);
-    badgeEyes.style.display = 'none';
-    const src = MOOD_IMG[dayMood];
-    if (src) { badgeExpr.src = src; badgeExpr.classList.add('visible'); }
-  } else if (isIdleSleepy) {
-    // Dozed off from inactivity, even though today is a normal work day.
-    clearTimeout(badgeBlinkTimer);
-    badgeEyes.style.display = 'none';
-    badgeExpr.src = 'sleepy.png';
-    badgeExpr.classList.add('visible');
-  } else {
-    // Normal awake state — show open eyes and start blinking.
-    badgeEyes.style.display = '';
-    badgeExpr.classList.remove('visible');
-    scheduleBadgeBlink();
+function createMochiController(eyesEl, exprEl) {
+  let mood = 'default';       // 'default' | 'sleepy' | 'surprised' — comes from the selected date
+  let idleSleepy = false;     // dozed off from inactivity, even on an otherwise normal day
+  let distressed = false;     // cursor-hamster got too close — highest-priority reaction
+  let blinkTimer = null;
+  let idleTimer = null;
+
+  function render() {
+    if (distressed) {
+      // Cursor got close — spooked, overrides everything else, no blinking.
+      clearTimeout(blinkTimer);
+      eyesEl.style.display = 'none';
+      exprEl.src = 'mad.png';
+      exprEl.classList.add('visible');
+    } else if (mood !== 'default') {
+      // Persistent day-mood expression (weekend / milestone) — no blinking.
+      clearTimeout(blinkTimer);
+      eyesEl.style.display = 'none';
+      const src = MOOD_IMG[mood];
+      if (src) { exprEl.src = src; exprEl.classList.add('visible'); }
+    } else if (idleSleepy) {
+      // Dozed off from inactivity, even though today is a normal work day.
+      clearTimeout(blinkTimer);
+      eyesEl.style.display = 'none';
+      exprEl.src = 'sleepy.png';
+      exprEl.classList.add('visible');
+    } else {
+      // Normal awake state — show open eyes and start blinking.
+      eyesEl.style.display = '';
+      exprEl.classList.remove('visible');
+      scheduleBlink();
+    }
   }
+
+  function scheduleBlink() {
+    clearTimeout(blinkTimer);
+    blinkTimer = setTimeout(doBlink, 3000 + Math.random() * 3000);
+  }
+  async function doBlink() {
+    if (mood !== 'default' || idleSleepy || distressed) return; // conditions changed, stop blinking
+    await flashBlink();
+    if (Math.random() < 0.25) { await pause(60); await flashBlink(); } // occasional double-blink
+    if (mood === 'default' && !idleSleepy && !distressed) scheduleBlink();
+  }
+  function flashBlink() {
+    return new Promise(res => {
+      eyesEl.style.display = 'none';
+      exprEl.src = 'blink.png';
+      exprEl.classList.add('visible');
+      setTimeout(() => {
+        exprEl.classList.remove('visible');
+        if (mood === 'default' && !idleSleepy && !distressed) eyesEl.style.display = '';
+        res();
+      }, 140);
+    });
+  }
+
+  function startIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (mood === 'default' && !distressed) { idleSleepy = true; render(); }
+    }, 10000); // 10 seconds
+  }
+
+  return {
+    // Call when the selected date changes — sets the day's mood and wakes it up.
+    setMood(m) { mood = m; idleSleepy = false; distressed = false; render(); startIdleTimer(); },
+    // Call on any mouse/keyboard activity to cancel idle-sleepy and restart the countdown.
+    noteActivity() { if (idleSleepy) { idleSleepy = false; render(); } startIdleTimer(); },
+    // Call with true/false as the cursor enters/leaves the distress radius.
+    setDistressed(v) { if (v === distressed) return; distressed = v; render(); }
+  };
 }
 
-function scheduleBadgeBlink() {
-  clearTimeout(badgeBlinkTimer);
-  badgeBlinkTimer = setTimeout(doBadgeBlink, 3000 + Math.random() * 3000);
-}
-async function doBadgeBlink() {
-  if (dayMood !== 'default' || isIdleSleepy) return; // conditions changed, stop blinking
-  await flashBadgeBlink();
-  if (Math.random() < 0.25) { await pause(60); await flashBadgeBlink(); } // occasional double-blink
-  if (dayMood === 'default' && !isIdleSleepy) scheduleBadgeBlink();
-}
-function flashBadgeBlink() {
-  return new Promise(res => {
-    badgeEyes.style.display = 'none';
-    badgeExpr.src = 'blink.png';
-    badgeExpr.classList.add('visible');
-    setTimeout(() => {
-      badgeExpr.classList.remove('visible');
-      if (dayMood === 'default' && !isIdleSleepy) badgeEyes.style.display = '';
-      res();
-    }, 140);
-  });
-}
+const badgeCtl = createMochiController(badgeEyes, badgeExpr);
+const bigCtl   = createMochiController(bigEyes, bigExpr);
 
-function startBadgeIdleTimer() {
-  clearTimeout(badgeIdleTimer);
-  badgeIdleTimer = setTimeout(() => {
-    if (dayMood === 'default') { isIdleSleepy = true; updateBadgeFace(); }
-  }, 10000); // 10 seconds
-}
-function resetBadgeIdle() {
-  if (isIdleSleepy) { isIdleSleepy = false; updateBadgeFace(); }
-  startBadgeIdleTimer();
-}
-document.addEventListener('mousemove', resetBadgeIdle);
-document.addEventListener('keydown', resetBadgeIdle);
+document.addEventListener('mousemove', () => { badgeCtl.noteActivity(); bigCtl.noteActivity(); });
+document.addEventListener('keydown',   () => { badgeCtl.noteActivity(); bigCtl.noteActivity(); });
 
 // ---- CUSTOM CURSOR + PROXIMITY DISTRESS ----
-// The cursor image follows the mouse everywhere. If it gets close to the
-// badge, Mochi gets spooked (mad.png) — this overrides blinking and idle-
-// sleepy while it's active, and hands control back to updateBadgeFace()
-// the moment the cursor backs off.
+// The cursor image follows the mouse everywhere. If it gets close to a
+// Mochi (the header badge, or the big one on UI-polish weeks), that Mochi
+// gets spooked — checked independently for each, since only one may be
+// visible at a time.
 const cursorMouse = document.getElementById('cursorMouse');
-const mochiBadge  = document.getElementById('mochiBadge');
-const DISTRESS_RADIUS = 130; // px — how close the cursor has to get
-let isDistressed = false;
-
-function showDistress() {
-  clearTimeout(badgeBlinkTimer);
-  badgeEyes.style.display = 'none';
-  badgeExpr.src = 'mad.png';
-  badgeExpr.classList.add('visible');
-}
+const mochiBadge   = document.getElementById('mochiBadge');
+const DISTRESS_RADIUS_BADGE = 130; // px
+const DISTRESS_RADIUS_BIG   = 220; // px — bigger Mochi, bigger personal space
 
 document.addEventListener('mousemove', (e) => {
   // move the cursor image
   cursorMouse.style.left = e.clientX + 'px';
   cursorMouse.style.top  = e.clientY + 'px';
 
-  // measure distance to the badge's center
-  const rect = mochiBadge.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+  // header badge
+  const badgeRect = mochiBadge.getBoundingClientRect();
+  const bdx = e.clientX - (badgeRect.left + badgeRect.width / 2);
+  const bdy = e.clientY - (badgeRect.top + badgeRect.height / 2);
+  badgeCtl.setDistressed(Math.hypot(bdx, bdy) < DISTRESS_RADIUS_BADGE);
 
-  if (dist < DISTRESS_RADIUS && !isDistressed) {
-    isDistressed = true;
-    showDistress();
-  } else if (dist >= DISTRESS_RADIUS && isDistressed) {
-    isDistressed = false;
-    updateBadgeFace(); // hand control back to day-mood / idle-sleepy / blink
+  // big Mochi — only meaningful while it's actually visible
+  if (bigMochi.style.display !== 'none') {
+    const bigRect = bigMochi.getBoundingClientRect();
+    const gdx = e.clientX - (bigRect.left + bigRect.width / 2);
+    const gdy = e.clientY - (bigRect.top + bigRect.height / 2);
+    bigCtl.setDistressed(Math.hypot(gdx, gdy) < DISTRESS_RADIUS_BIG);
   }
 });
 
@@ -686,22 +728,31 @@ function selectDate(index, immediateCarousel) {
   moodTag.textContent = MOOD_LABEL[day.mood];
   renderLinks(day.links);
 
-  // If a day has no real photos yet (research/GDD days), fall back to a
-  // single "notes only" card instead of leaving the polaroid empty.
-  const hasPhotos = day.photos && day.photos.length > 0;
-  currentPhotos  = hasPhotos ? day.photos : [docPlaceholderSVG('Notes only — see links below')];
-  currentCaptions = hasPhotos ? (day.photoCaptions || []) : ['Notes only — see links below'];
-  currentPhoto = 0;
-  showPhoto(0);
-  carouselCtrl.style.display = currentPhotos.length > 1 ? 'flex' : 'none';
+  if (day.showBigMochi) {
+    // UI-polish week: show the big living Mochi instead of a photo/carousel.
+    photoImg.style.display = 'none';
+    bigMochi.style.display = 'block';
+    carouselCtrl.style.display = 'none';
+    photoCaption.textContent = day.bigCaption || 'Mochi, at full size';
+    bigCtl.setMood(day.mood);
+  } else {
+    bigMochi.style.display = 'none';
+    photoImg.style.display = 'block';
+
+    // If a day has no real photos yet (research/GDD days), fall back to a
+    // single "notes only" card instead of leaving the polaroid empty.
+    const hasPhotos = day.photos && day.photos.length > 0;
+    currentPhotos  = hasPhotos ? day.photos : [docPlaceholderSVG('Notes only — see links below')];
+    currentCaptions = hasPhotos ? (day.photoCaptions || []) : ['Notes only — see links below'];
+    currentPhoto = 0;
+    showPhoto(0);
+    carouselCtrl.style.display = currentPhotos.length > 1 ? 'flex' : 'none';
+  }
 
   // Picking a date counts as activity: reset idle/blink state for the badge.
-  dayMood = day.mood;
-  isIdleSleepy = false;
-  updateBadgeFace();
-  startBadgeIdleTimer();
+  badgeCtl.setMood(day.mood);
 
-  if (immediateCarousel) startCarousel(); else stopCarousel();
+  if (immediateCarousel && !day.showBigMochi) startCarousel(); else stopCarousel();
 }
 
 // ---- SLIDER EVENTS ----
