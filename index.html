@@ -431,6 +431,24 @@ const PLACEHOLDER_NOTES = [
   "Placeholder note — add a quick reflection or a small win from today.",
 ];
 
+// ---- WEEKEND PHOTO POOL ----
+// Real (non-work) photos + jokey captions, cycled through every Saturday/
+// Sunday in the diary. Add more objects here any time — they'll just join
+// the rotation. Photos live in the same folder as diary.html.
+const WEEKEND_ENTRIES = [
+  {
+    photo: 'weekend-tennis.png',
+    caption: 'Tennis > try/catch',
+    note: "Played tennis today — because being bad at one thing (coding) clearly wasn't enough for one weekend."
+  },
+  {
+    photo: 'weekend-flight.png',
+    caption: 'Caught a flight to sanity',
+    note: "Caught a flight to sanity after yesterday's error message. 10/10 view, would crash again."
+  }
+];
+let weekendCounter = 0; // cycles through WEEKEND_ENTRIES in order as weekends come up
+
 // A simple "document" card used whenever a day has notes/links but no
 // photos yet, so the polaroid slot never looks broken or empty.
 function docPlaceholderSVG(caption) {
@@ -500,11 +518,26 @@ function buildDay(i) {
   }
 
   // ---- PLACEHOLDER (every other day, until real progress replaces it) ----
+  const mood = moodFor(d, dayNum);
+
+  if (mood === 'sleepy') {
+    // Weekend — pull the next entry from the fun-photo pool instead of the
+    // generic work-day placeholder.
+    const entry = WEEKEND_ENTRIES[weekendCounter % WEEKEND_ENTRIES.length];
+    weekendCounter++;
+    return {
+      date: d, label: formatLong(d), dayNum, mood,
+      note: entry.note,
+      photos: [entry.photo],
+      photoCaptions: [entry.caption]
+    };
+  }
+
   return {
     date: d,
     label: formatLong(d),
     dayNum,
-    mood: moodFor(d, dayNum),
+    mood,
     note: PLACEHOLDER_NOTES[i % PLACEHOLDER_NOTES.length],
     photos: [
       placeholderPhoto(dayNum, 0),
