@@ -439,17 +439,17 @@ const WEEKEND_ENTRIES = [
   {
     photo: 'weekend-tennis.png',
     caption: 'Tennis > try/catch',
-    note: "Played tennis today — because being bad at one thing (coding) clearly wasn't enough."
+    note: "Played tennis today — because being bad at one thing (coding) clearly wasn't enough for one weekend."
   },
   {
     photo: 'weekend-flight.png',
     caption: 'Caught a flight to sanity',
-    note: "Caught a flight to sanity after yesterday's error message. 10/10 view, would error again."
+    note: "Caught a flight to sanity after yesterday's error message. 10/10 view, would crash again."
   },
-     {
+  {
     photo: 'weekend-fakeit.jpg',
-    caption: 'Hotel diary',
-    note: "Does it look like I know what I'm doing (works better in hotels than in Unity)."
+    caption: 'Trying to look cool',
+    note: "Trying to look like I know what I'm doing (works better in hotels than in Unity)."
   },
   {
     photo: 'weekend-roadtrip.jpg',
@@ -473,7 +473,7 @@ const WEEKEND_ENTRIES = [
   },
   {
     photo: 'weekend-hospital.png',
-    caption: 'Blood tests',
+    caption: 'Getting checked',
     note: "Getting checked — coz choosing CS voluntarily can't be normal."
   },
   {
@@ -551,7 +551,8 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'default',
       note: "Research day — looked into existing food-sorting and match-3 style mobile games: core mechanics, level pacing, and monetization patterns, before starting the design doc.",
       links: [{ label: '📄 Research notes', url: 'https://docs.google.com/document/d/1RhMnqDutOYF4iP57AK9ZbfcG7g7M5YX7WwIKoidhSqk/edit?usp=sharing' }],
-      photos: [], photoCaptions: []
+      photos: ['day1-research-doc.png'],
+      photoCaptions: ['Research doc — breaking down a full game dev pipeline (Candy Crush as the case study)']
     };
   }
   if (dayNum === 2) {
@@ -559,7 +560,8 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'default',
       note: "Turned yesterday's research into a full Game Design Document — core loop, food categories per episode, level progression tables, monetization plan, and the 4-week dev roadmap.",
       links: [{ label: '📄 Game Design Document', url: 'https://docs.google.com/document/d/1bFlVpa68chdKFJUJwH9425kW1z-rvMaAWVya1qfArrg/edit?usp=sharing' }],
-      photos: [], photoCaptions: []
+      photos: ['day2-gdd-doc.png'],
+      photoCaptions: ['GDD v1.0 — Food Sort Frenzy, Unity 6 LTS, Android-first']
     };
   }
   if (dayNum === 3) {
@@ -575,6 +577,28 @@ function buildDay(i) {
         "<br>🛠️ One thing left for tomorrow: switch Active Input Handling to \"Both\" in Project Settings — a one-dropdown fix.",
       photos: ['day3-unity-error.png', 'day3-github-repo.png'],
       photoCaptions: ['Blocked here — Input System setting, fixed in one dropdown', 'GitHub repo set up and pushed']
+    };
+  }
+
+  if (dayNum === 4) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "Picked up right where yesterday left off — flipped Active Input Handling to \"Both\" and drag-and-swap " +
+        "finally worked. From there the rest of the core loop came together fast." +
+        "<br><br><b>JSON level loader</b> — <code>level_01.json</code> reads cleanly into <code>LevelData.cs</code>, " +
+        "no hardcoded layouts, so adding new levels later is just a new JSON file." +
+        "<br><br><b>Grid renderer</b> — <code>GameBoard.cs</code> builds the board straight from that data and " +
+        "colors each slot by food type." +
+        "<br><br><b>Drag and swap</b> — <code>FoodSlot.cs</code> now swaps two food items on drop instead of just " +
+        "highlighting them; yesterday's blocker is gone." +
+        "<br><br><b>Win detection</b> — each row checks itself after every move; once every slot in a row matches, " +
+        "it logs \"Row cleared\" and locks that row." +
+        "<br><br><b>Level complete</b> — once all rows report cleared, the board fires a single \"Level complete\" " +
+        "event. First fully playable level, start to finish." +
+        "<br><br>✅ JSON level loader &nbsp; ✅ Grid renderer &nbsp; ✅ Drag and swap &nbsp; ✅ Win detection &nbsp; ✅ Level complete",
+      photos: ['day4-level-complete.png'],
+      photoCaptions: ['First playable level — all rows cleared, LEVEL COMPLETE firing in the console']
     };
   }
 
