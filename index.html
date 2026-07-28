@@ -602,6 +602,27 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 5) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "Big day — the grid finally looks like a real game instead of colored squares. Swapped in the actual " +
+        "food sprites generated in Leonardo, and the whole loop around a single level got built out." +
+        "<br><br><b>Timer &amp; move counter</b> — both run live and feed straight into win/fail checks instead of " +
+        "sitting there as decoration." +
+        "<br><br><b>Level complete / fail screens</b> — a level now properly ends one way or the other, with a " +
+        "<b>Retry</b> button wired up on the fail screen." +
+        "<br><br><b>Level progression</b> — clearing a level unlocks the next one (1 → 2 → 3…), so it's not a " +
+        "single isolated level anymore." +
+        "<br><br><b>All 20 levels authored</b> — every level from the GDD is now a real JSON file, not just level_01." +
+        "<br><br>✅ JSON level loader &nbsp; ✅ Grid renders &nbsp; ✅ Drag and swap &nbsp; ✅ Win detection" +
+        "<br>✅ Timer &amp; move counter &nbsp; ✅ Level complete / fail screens &nbsp; ✅ Retry button" +
+        "<br>✅ Level progression &nbsp; ✅ All 20 levels authored &nbsp; ✅ Food sprites from Leonardo",
+      photos: ['day5-food-sprites.png'],
+      photoCaptions: ['Real food sprites in, timer running — 71 seconds in and the board finally looks like a game']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
