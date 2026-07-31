@@ -623,6 +623,22 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 8) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "An honest reset day. Wasn't happy with how the game was coming together or how slowly it was moving — " +
+        "so instead of pushing through on the same plan, I stopped and followed an RPG tutorial to see if a " +
+        "different direction might actually work better." +
+        "<br><br>Wasn't planning on switching gears this early, but one day into it, this is already coming " +
+        "together faster and feeling more alive than the last week combined. Not committing to anything yet — " +
+        "just following where the momentum is, and it's pointing here for now." +
+        "<br><br>🧭 Direction: leaning RPG for the moment, evaluating over the next few days.",
+      photos: ['day8-rpg-pivot.gif'],
+      photoCaptions: ['One day into the new direction — basic RPG movement, already further along than expected']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
