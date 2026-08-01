@@ -639,6 +639,24 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 9) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "Slower day, most of it spent on one feature: an attack animation plus a placeholder enemy that flashes " +
+        "red when it takes a hit, just to have some visual feedback before real enemies exist. Took longer than " +
+        "expected — nothing complicated about it, just fiddly to get feeling right." +
+        "<br><br>Also went back and cleaned a few things up: aligned the jump/falling/idle clips from earlier so " +
+        "the transitions between them actually look intentional, and gated jumping so it only fires when the " +
+        "player is actually grounded — no more jumping mid-air." +
+        "<br><br>Set up an attack circle to define how far an attack actually reaches, which the placeholder " +
+        "enemy now reacts to." +
+        "<br><br>Not a big-feature day, but the kind of groundwork that has to happen before combat feels right.",
+      photos: ['day9-attack-enemy.gif'],
+      photoCaptions: ['Attack animation + placeholder enemy flashing red on hit']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
