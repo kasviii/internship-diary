@@ -657,6 +657,40 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 10) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "Started with the plumbing: attack timers and cooldowns so hits can't just spam, and the actual attack " +
+        "logic sitting on top of yesterday's attack circle." +
+        "<br><br>Then moved into enemies properly. Since there's going to be a lot of them, went back and " +
+        "restructured with inheritance — a base enemy class holding everything they all share, with individual " +
+        "enemy types inheriting from it and overriding just their own quirks. Some polymorphism on top so shared " +
+        "code can call enemy-specific behavior without needing to know which enemy it's talking to." +
+        "<br><br>Got the skeleton's animations working on top of that — and then something broke. Not sure what " +
+        "exactly got tangled, but the player got stuck in the fall animation permanently, even standing still, " +
+        "and stopped responding to input entirely. Spent the rest of the day chasing it. Felt like two days of " +
+        "progress had unraveled in an afternoon." +
+        "<br><br>Turned out to be a small, dumb fix in the end — but finding it took the whole day.",
+      photos: ['day10-skeleton-fall-bug.gif'],
+      photoCaptions: ['Skeleton animation working, right before the player got stuck mid-fall for the rest of the day']
+    };
+  }
+  if (dayNum === 11) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      noteHTML:
+        "Recovered from yesterday and built on the enemy base class from before: enemies can now detect the " +
+        "player within a set radius and attack once they're in range, instead of just standing there." +
+        "<br><br>Also noticed enemies were colliding with each other exactly like the player collides with the " +
+        "ground, which looked wrong for a crowd of enemies. Turned that off for now, so they pass through each " +
+        "other instead — not correct long-term, but good enough to keep moving. Proper enemy-to-enemy collision " +
+        "is still on the list to fix later.",
+      photos: ['day11-enemy-attack-radius.gif'],
+      photoCaptions: ['Enemies detecting and attacking within radius — still passing through each other for now']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
