@@ -279,7 +279,7 @@
 </head>
 <body>
 
-<img id="cursorMouse" src="cursor-hamster.png" alt="">
+<img id="cursorMouse" src="assets/ui/cursor-hamster.png" alt="">
 
 <header>
   <div class="header-left">
@@ -287,8 +287,8 @@
   </div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-      <span class="icon active" id="sunIcon"><img src="SunToggle.png" alt="Light"></span>
-      <span class="icon" id="moonIcon"><img src="MoonToggle.png" alt="Dark"></span>
+      <span class="icon active" id="sunIcon"><img src="assets/ui/SunToggle.png" alt="Light"></span>
+      <span class="icon" id="moonIcon"><img src="assets/ui/MoonToggle.png" alt="Dark"></span>
     </button>
   </div>
 </header>
@@ -299,8 +299,8 @@
     <!-- Mochi badge + current date -->
     <div class="diary-head">
       <div class="mochi-badge" id="mochiBadge">
-        <img id="badgeBase" src="original.png" alt="">
-        <img id="badgeEyes" src="eyes.png" alt="">
+        <img id="badgeBase" src="assets/mochi/original.png" alt="">
+        <img id="badgeEyes" src="assets/mochi/eyes.png" alt="">
         <img id="badgeExpr" src="" alt="">
       </div>
       <div class="diary-heading">
@@ -323,8 +323,8 @@
           <div class="photo-frame" id="photoFrame">
             <img id="photoImg" src="" alt="Diary photo">
             <div class="big-mochi" id="bigMochi">
-              <img id="bigBase" src="original.png" alt="">
-              <img id="bigEyes" src="eyes.png" alt="">
+              <img id="bigBase" src="assets/mochi/original.png" alt="">
+              <img id="bigEyes" src="assets/mochi/eyes.png" alt="">
               <img id="bigExpr" src="" alt="">
             </div>
           </div>
@@ -421,8 +421,8 @@ const MOOD_LABEL = {
 // Maps mood -> expression image, same filenames as the login page's mochi
 const MOOD_IMG = {
   default:   '',            // no overlay needed, base face is enough
-  sleepy:    'sleepy.png',
-  surprised: 'surprised.png'
+  sleepy:    'assets/mochi/sleepy.png',
+  surprised: 'assets/mochi/surprised.png'
 };
 
 const PLACEHOLDER_NOTES = [
@@ -437,87 +437,87 @@ const PLACEHOLDER_NOTES = [
 // the rotation. Photos live in the same folder as diary.html.
 const WEEKEND_ENTRIES = [
   {
-    photo: 'weekend-tennis.png',
+    photo: 'photos/weekend-tennis.png',
     caption: 'Tennis > try/catch',
     note: "Played tennis today — because being bad at one thing (coding) clearly wasn't enough for one weekend."
   },
   {
-    photo: 'weekend-flight.png',
+    photo: 'photos/weekend-flight.png',
     caption: 'Caught a flight to sanity',
     note: "Caught a flight to sanity after yesterday's error message. 10/10 view, would crash again."
   },
   {
-    photo: 'weekend-fakeit.jpg',
+    photo: 'photos/weekend-fakeit.jpg',
     caption: 'Trying to look cool',
     note: "Trying to look like I know what I'm doing (works better in hotels than in Unity)."
   },
   {
-    photo: 'weekend-roadtrip.jpg',
+    photo: 'photos/weekend-roadtrip.jpg',
     caption: 'Road trip',
     note: "Windows down, deadlines somewhere far behind."
   },
   {
-    photo: 'weekend-firstrain.jpg',
+    photo: 'photos/weekend-firstrain.jpg',
     caption: 'First rain, Haldwani',
     note: "First rain of the season."
   },
   {
-    photo: 'weekend-temple.png',
+    photo: 'photos/weekend-temple.png',
     caption: 'Temple run',
     note: "Visiting god, coz only she can help me now."
   },
   {
-    photo: 'weekend-baking.png',
+    photo: 'photos/weekend-baking.png',
     caption: 'Baking therapy',
     note: "When the code won't compile but the muffins did."
   },
   {
-    photo: 'weekend-hospital.png',
+    photo: 'photos/weekend-hospital.png',
     caption: 'Getting checked',
     note: "Getting checked — coz choosing CS voluntarily can't be normal."
   },
   {
-    photo: 'weekend-leetcode.png',
+    photo: 'photos/weekend-leetcode.png',
     caption: 'LeetCode grind',
     note: "At least the project doesn't give me nightmares like LeetCode does."
   },
   {
-    photo: 'weekend-onepiece-1.png',
+    photo: 'photos/weekend-onepiece-1.png',
     caption: 'One Piece, day 1',
     note: "Started a One Piece binge. \"I don't want to conquer anything — I just think the guy with the most freedom in this whole ocean is the Pirate King.\" — Luffy"
   },
   {
-    photo: 'weekend-onepiece-2.png',
+    photo: 'photos/weekend-onepiece-2.png',
     caption: 'One Piece, day 2',
     note: "Still watching. No regrets. Send snacks, not sympathy."
   },
   {
-    photo: 'weekend-bedrot.png',
+    photo: 'photos/weekend-bedrot.png',
     caption: 'Bed rot Sunday',
     note: "Horizontal all day. Wish I could quit this habit — starting tomorrow, probably."
   },
   {
-    photo: 'weekend-sketch.png',
+    photo: 'photos/weekend-sketch.png',
     caption: 'Sketch dump',
     note: "Spent the whole day doodling cats instead of committing code."
   },
   {
-    photo: 'weekend-cafe.jpg',
+    photo: 'photos/weekend-cafe.jpg',
     caption: 'Cafe hopping',
     note: "Went to a cafe — purely for research purposes (the vibes, mostly)."
   },
   {
-    photo: 'weekend-brainrot.png',
+    photo: 'photos/weekend-brainrot.png',
     caption: 'Focus: failed',
     note: "Me: I really need to focus. My brain: absolutely not. Somebody fix me."
   },
   {
-    photo: 'weekend-crochet.png',
+    photo: 'photos/weekend-crochet.png',
     caption: 'Crochet weekend',
     note: "Crocheted my way through the entire weekend — way more satisfying than debugging."
   },
   {
-    photo: 'weekend-flight2.jpg',
+    photo: 'photos/weekend-flight2.jpg',
     caption: 'Flight back home',
     note: "Flight back home — the moon showed up to see me off."
   }
@@ -551,7 +551,7 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'default',
       note: "Research day — looked into existing food-sorting and match-3 style mobile games: core mechanics, level pacing, and monetization patterns, before starting the design doc.",
       links: [{ label: '📄 Research notes', url: 'https://docs.google.com/document/d/1RhMnqDutOYF4iP57AK9ZbfcG7g7M5YX7WwIKoidhSqk/edit?usp=sharing' }],
-      photos: ['day1-research-doc.png'],
+      photos: ['photos/day1-research-doc.png'],
       photoCaptions: ['Research doc — breaking down a full game dev pipeline (Candy Crush as the case study)']
     };
   }
@@ -560,7 +560,7 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'default',
       note: "Turned yesterday's research into a full Game Design Document — core loop, food categories per episode, level progression tables, monetization plan, and the 4-week dev roadmap.",
       links: [{ label: '📄 Game Design Document', url: 'https://docs.google.com/document/d/1bFlVpa68chdKFJUJwH9425kW1z-rvMaAWVya1qfArrg/edit?usp=sharing' }],
-      photos: ['day2-gdd-doc.png'],
+      photos: ['photos/day2-gdd-doc.png'],
       photoCaptions: ['GDD v1.0 — Food Sort Frenzy, Unity 6 LTS, Android-first']
     };
   }
@@ -575,7 +575,7 @@ function buildDay(i) {
         "<code>FoodSlot.cs</code> handling drag-and-swap (almost working)." +
         "<br><br>✅ JSON loader &nbsp; ✅ Grid renders &nbsp; ✅ Food colors display correctly" +
         "<br>🛠️ One thing left for tomorrow: switch Active Input Handling to \"Both\" in Project Settings — a one-dropdown fix.",
-      photos: ['day3-unity-error.png', 'day3-github-repo.png'],
+      photos: ['photos/day3-unity-error.png', 'photos/day3-github-repo.png'],
       photoCaptions: ['Blocked here — Input System setting, fixed in one dropdown', 'GitHub repo set up and pushed']
     };
   }
@@ -597,7 +597,7 @@ function buildDay(i) {
         "<br><br><b>Level complete</b> — once all rows report cleared, the board fires a single \"Level complete\" " +
         "event. First fully playable level, start to finish." +
         "<br><br>✅ JSON level loader &nbsp; ✅ Grid renderer &nbsp; ✅ Drag and swap &nbsp; ✅ Win detection &nbsp; ✅ Level complete",
-      photos: ['day4-level-complete.png'],
+      photos: ['photos/day4-level-complete.png'],
       photoCaptions: ['First playable level — all rows cleared, LEVEL COMPLETE firing in the console']
     };
   }
@@ -618,7 +618,7 @@ function buildDay(i) {
         "<br><br>✅ JSON level loader &nbsp; ✅ Grid renders &nbsp; ✅ Drag and swap &nbsp; ✅ Win detection" +
         "<br>✅ Timer &amp; move counter &nbsp; ✅ Level complete / fail screens &nbsp; ✅ Retry button" +
         "<br>✅ Level progression &nbsp; ✅ All 20 levels authored &nbsp; ✅ Food sprites from Leonardo",
-      photos: ['day5-food-sprites.png'],
+      photos: ['photos/day5-food-sprites.png'],
       photoCaptions: ['Real food sprites in, timer running — 71 seconds in and the board finally looks like a game']
     };
   }
@@ -634,7 +634,7 @@ function buildDay(i) {
         "together faster and feeling more alive than the last week combined. Not committing to anything yet — " +
         "just following where the momentum is, and it's pointing here for now." +
         "<br><br>🧭 Direction: leaning RPG for the moment, evaluating over the next few days.",
-      photos: ['day8-rpg-pivot.gif'],
+      photos: ['photos/day8-rpg-pivot.gif'],
       photoCaptions: ['One day into the new direction — basic RPG movement, already further along than expected']
     };
   }
@@ -652,7 +652,7 @@ function buildDay(i) {
         "<br><br>Set up an attack circle to define how far an attack actually reaches, which the placeholder " +
         "enemy now reacts to." +
         "<br><br>Not a big-feature day, but the kind of groundwork that has to happen before combat feels right.",
-      photos: ['day9-attack-enemy.gif'],
+      photos: ['photos/day9-attack-enemy.gif'],
       photoCaptions: ['Attack animation + placeholder enemy flashing red on hit']
     };
   }
@@ -672,7 +672,7 @@ function buildDay(i) {
         "and stopped responding to input entirely. Spent the rest of the day chasing it. Felt like two days of " +
         "progress had unraveled in an afternoon." +
         "<br><br>Turned out to be a small, dumb fix in the end — but finding it took the whole day.",
-      photos: ['day10-skeleton-fall-bug.gif'],
+      photos: ['photos/day10-skeleton-fall-bug.gif'],
       photoCaptions: ['Skeleton animation working, right before the player got stuck mid-fall for the rest of the day']
     };
   }
@@ -686,7 +686,7 @@ function buildDay(i) {
         "ground, which looked wrong for a crowd of enemies. Turned that off for now, so they pass through each " +
         "other instead — not correct long-term, but good enough to keep moving. Proper enemy-to-enemy collision " +
         "is still on the list to fix later.",
-      photos: ['day11-enemy-attack-radius.gif'],
+      photos: ['photos/day11-enemy-attack-radius.gif'],
       photoCaptions: ['Enemies detecting and attacking within radius — still passing through each other for now']
     };
   }
@@ -834,7 +834,7 @@ function createMochiController(eyesEl, exprEl) {
       // Cursor got close — spooked, overrides everything else, no blinking.
       clearTimeout(blinkTimer);
       eyesEl.style.display = 'none';
-      exprEl.src = 'mad.png';
+      exprEl.src = 'assets/mochi/mad.png';
       exprEl.classList.add('visible');
     } else if (mood !== 'default') {
       // Persistent day-mood expression (weekend / milestone) — no blinking.
@@ -846,7 +846,7 @@ function createMochiController(eyesEl, exprEl) {
       // Dozed off from inactivity, even though today is a normal work day.
       clearTimeout(blinkTimer);
       eyesEl.style.display = 'none';
-      exprEl.src = 'sleepy.png';
+      exprEl.src = 'assets/mochi/sleepy.png';
       exprEl.classList.add('visible');
     } else {
       // Normal awake state — show open eyes and start blinking.
@@ -869,7 +869,7 @@ function createMochiController(eyesEl, exprEl) {
   function flashBlink() {
     return new Promise(res => {
       eyesEl.style.display = 'none';
-      exprEl.src = 'blink.png';
+      exprEl.src = 'assets/mochi/blink.png';
       exprEl.classList.add('visible');
       setTimeout(() => {
         exprEl.classList.remove('visible');
