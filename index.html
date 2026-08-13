@@ -776,6 +776,23 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 26) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'surprised',
+      noteHTML:
+        "Had a few check-ins with my mentor along the way, and this is the final product for now — the whole " +
+        "thing put together in one clip. It's not everything I'd want eventually (attack depth, more enemy " +
+        "variety, more content are all still on the wishlist), but it's a complete, playable loop start to finish.",
+      links: [
+        { label: '▶ Play Forest Warrior', url: 'https://kasviii.itch.io/forest-warrior' },
+        { label: '💻 Game repo', url: 'https://github.com/kasviii/2D-game/tree/main' },
+        { label: '📔 This diary', url: 'https://kasviii.github.io/internship-diary/' }
+      ],
+      photos: ['photos/day26-final-game.gif'],
+      photoCaptions: ['The full game, start to finish']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
