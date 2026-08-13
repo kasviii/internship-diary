@@ -691,6 +691,71 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 12) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Started on the background — got a first pass of the environment art in and actually moving, instead of a flat color sitting behind the action.",
+      photos: ['photos/bg-animation.gif'],
+      photoCaptions: ['Background animation, first pass']
+    };
+  }
+  if (dayNum === 15) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Picked the background back up and pushed it further — smoothing the animation loop out so it doesn't feel like it's obviously repeating.",
+      photos: ['photos/bg-animation.gif'],
+      photoCaptions: ['Background animation, loop smoothed out']
+    };
+  }
+  if (dayNum === 16) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Moved on to damage feedback — hits now actually register visually instead of just subtracting a number somewhere silently. Also settled on what the player is protecting: a small NPC, a little girl, and the whole defend mechanic is being built around her.",
+      photos: ['photos/damage-feedback.gif'],
+      photoCaptions: ['Damage feedback landing on a hit']
+    };
+  }
+  if (dayNum === 17) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Kept building on yesterday — wiring the damage feedback system to the protect-target too, so hits on her actually register, not just hits on the player.",
+      photos: ['photos/damage-feedback.gif'],
+      photoCaptions: ['Damage feedback, now tied to the protect target']
+    };
+  }
+  if (dayNum === 18) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Got the protect-target properly placed and reacting in the world. In the process, the attack point got messed up somewhere — hits started registering from the wrong spot entirely. Didn't solve it today, just confirmed it's there.",
+      photos: ['photos/protect-target-bug.gif'],
+      photoCaptions: ['Protect target in — and the attack-point bug in action']
+    };
+  }
+  if (dayNum === 19) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Spent today cleaning up and refactoring instead of adding anything new — mostly to make yesterday's attack-point bug easier to actually find. Tracked it down and fixed it along the way.",
+      photos: ['photos/protect-target-bug.gif'],
+      photoCaptions: ['Same setup — attack-point bug fixed after the cleanup']
+    };
+  }
+  if (dayNum === 22) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Built out the in-game UI — health and whatever else needs to be visible mid-run, so the player isn't flying blind.",
+      photos: ['photos/ingame-gameover-ui.gif'],
+      photoCaptions: ['In-game UI taking shape']
+    };
+  }
+  if (dayNum === 23) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Added the game-over screen to go with it, so a run actually ends somewhere instead of just stopping.",
+      photos: ['photos/ingame-gameover-ui.gif'],
+      photoCaptions: ['Game over screen, paired with the in-game UI']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
