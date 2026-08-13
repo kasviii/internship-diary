@@ -756,6 +756,23 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 24) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Built the enemy respawner next — enemies now come back after being cleared instead of the level just running out of things to fight halfway through.",
+      photos: ['photos/day24-enemy-respawner.png'],
+      photoCaptions: ['Enemy_Respawner wired into the scene, alongside the protect target']
+    };
+  }
+  if (dayNum === 25) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'surprised',
+      note: "The minigame is done. Committed everything to GitHub and recorded a demo video. It's live — playable in the browser.",
+      links: [{ label: '🎮 Play Forest Warrior', url: 'https://kasviii.itch.io/forest-warrior' }],
+      photos: [], photoCaptions: []
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
