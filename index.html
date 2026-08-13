@@ -767,8 +767,11 @@ function buildDay(i) {
   if (dayNum === 25) {
     return {
       date: d, label: formatLong(d), dayNum, mood: 'surprised',
-      note: "The minigame is done. Committed everything to GitHub and recorded a demo video. It's live — playable in the browser.",
-      links: [{ label: '🎮 Play Forest Warrior', url: 'https://kasviii.itch.io/forest-warrior' }],
+      note: "The minigame is done and committed to GitHub. It's live — playable directly in the browser, no video needed when you can just play it.",
+      links: [
+        { label: '▶ Play Forest Warrior', url: 'https://kasviii.itch.io/forest-warrior' },
+        { label: '💻 View on GitHub', url: 'https://github.com/kasviii/2D-game/tree/main' }
+      ],
       photos: [], photoCaptions: []
     };
   }
