@@ -211,6 +211,7 @@
   .polaroid:hover { transform: rotate(0deg); }
   .photo-frame { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; background: #ddd; }
   .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   /* ---- BIG MOCHI (used for weeks with no dev screenshots) ----
      Same 3-layer trick as the header badge, just filling the whole
@@ -322,6 +323,7 @@
         <div class="polaroid">
           <div class="photo-frame" id="photoFrame">
             <img id="photoImg" src="" alt="Diary photo">
+            <video id="photoVideo" muted loop autoplay playsinline></video>
             <div class="big-mochi" id="bigMochi">
               <img id="bigBase" src="assets/mochi/original.png" alt="">
               <img id="bigEyes" src="assets/mochi/eyes.png" alt="">
@@ -788,7 +790,7 @@ function buildDay(i) {
         { label: '💻 Game repo', url: 'https://github.com/kasviii/2D-game/tree/main' },
         { label: '📔 This diary', url: 'https://kasviii.github.io/internship-diary/' }
       ],
-      photos: ['photos/day26-final-game.gif'],
+      photos: ['photos/day26-final-game.mp4'],
       photoCaptions: ['The full game, start to finish']
     };
   }
@@ -847,6 +849,7 @@ const noteText     = document.getElementById('noteText');
 const moodTag      = document.getElementById('moodTag');
 const linksWrap    = document.getElementById('linksWrap');
 const photoImg     = document.getElementById('photoImg');
+const photoVideo   = document.getElementById('photoVideo');
 const photoCaption = document.getElementById('photoCaption');
 const photoDots    = document.getElementById('photoDots');
 const carouselCtrl = document.getElementById('carouselCtrl');
@@ -896,7 +899,22 @@ function renderDots() {
 
 function showPhoto(index) {
   currentPhoto = (index + currentPhotos.length) % currentPhotos.length;
-  photoImg.src = currentPhotos[currentPhoto];
+  const src = currentPhotos[currentPhoto];
+  const isVideo = /\.mp4($|\?)/i.test(src);
+
+  if (isVideo) {
+    photoImg.style.display = 'none';
+    photoVideo.style.display = 'block';
+    if (photoVideo.getAttribute('src') !== src) photoVideo.src = src;
+    photoVideo.currentTime = 0;
+    photoVideo.play().catch(() => {}); // browsers can block autoplay; muted+playsinline covers most cases
+  } else {
+    photoVideo.pause();
+    photoVideo.style.display = 'none';
+    photoImg.style.display = 'block';
+    photoImg.src = src;
+  }
+
   photoCaption.textContent = currentCaptions[currentPhoto]
     || `Day ${diaryData[currentDay].dayNum} · Photo ${currentPhoto + 1}`;
   renderDots();
