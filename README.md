@@ -13,7 +13,7 @@ deliberate call to stop, follow an RPG tutorial to reassess direction, and
 rebuild from there. That became **Forest Warrior**, a 2D action-RPG, which
 is what actually shipped.
 
-The diary (`diary.html`) documents that whole arc as it happened — research,
+The diary (`index.html`) documents that whole arc as it happened — research,
 design, the build, the pivot, and the finished game — with real notes,
 screenshots, and gifs per day, not written after the fact.
 
