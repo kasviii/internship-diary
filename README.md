@@ -2,6 +2,7 @@
 
 - ▶ **Play the game:** https://kasviii.itch.io/forest-warrior
 - 💻 **Game repo:** https://github.com/kasviii/2D-game/tree/main
+- 💻 **Game repo:** https://github.com/kasviii/FoodSortFrenzy
 - 📔 **Full diary:** https://kasviii.github.io/internship-diary/
 
 ## What this is
