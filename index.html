@@ -94,12 +94,6 @@
     transition: background 0.9s;
   }
   .header-left { display: flex; align-items: center; gap: 14px; }
-  .demo-badge {
-    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px;
-    letter-spacing: 2.5px; color: var(--text-label);
-    background: var(--toggle-track); padding: 6px 16px; border-radius: 20px;
-    transition: background 0.3s, color 0.3s;
-  }
   .header-right { display: flex; align-items: center; gap: 16px; }
 
   .theme-toggle {
@@ -283,9 +277,7 @@
 <img id="cursorMouse" src="assets/ui/cursor-hamster.png" alt="">
 
 <header>
-  <div class="header-left">
-    <div class="demo-badge">DEMO</div>
-  </div>
+  <div class="header-left"></div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
       <span class="icon active" id="sunIcon"><img src="assets/ui/SunToggle.png" alt="Light"></span>
@@ -792,6 +784,15 @@ function buildDay(i) {
       ],
       photos: ['photos/day26-final-game.mp4'],
       photoCaptions: ['The full game, start to finish']
+    };
+  }
+
+  if (dayNum === 29) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Started on game 2. Figured out what I actually want to build this time before writing anything. First script down: basic jump and collision — nothing more than that today, just the foundation.",
+      photos: ['photos/day29-game2-jump-collision.gif'],
+      photoCaptions: ['Game 2 — first script, jump and collision working']
     };
   }
 
