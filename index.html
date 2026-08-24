@@ -796,6 +796,23 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 30) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Added the sprites and got the animator set up so transitions between states actually look smooth instead of snapping. Lost a genuinely embarrassing amount of time to a missing semicolon somewhere in the middle of it. But \"onion lad\" (the working nickname at this point) is well on its way — feels like it could be done in a few days.",
+      photos: ['photos/day30-onion-lad-animator.gif'],
+      photoCaptions: ['Sprites + smooth animator transitions, after the semicolon fiasco']
+    };
+  }
+  if (dayNum === 31) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Slower day. Just character rotation, a gun that follows the mouse, and its shoot animation — small pieces, but they're the ones that make aiming actually feel like aiming.",
+      photos: ['photos/day31-gun-rotation.gif'],
+      photoCaptions: ['Character rotation + mouse-following gun with shoot animation']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
