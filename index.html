@@ -813,6 +813,31 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 32) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Worked on bullets — they now follow an actual trajectory and rotate to face the direction they're travelling, instead of a flat horizontal rectangle getting flung around regardless of angle. They can also destroy the target now. Started on the target respawner toward the end of the day: got the target set up as a prefab and added the box collider that'll drive the respawn.",
+      photos: ['photos/day32-bullet-trajectory.gif'],
+      photoCaptions: ['Bullets rotating to face their travel direction, now able to destroy the target']
+    };
+  }
+  if (dayNum === 33) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Finished the target respawner from yesterday — the target now actually has gravity instead of floating in place. Also built a deadzone that announces game over to the console when the player falls through it. Started on tiles and the background too, right at the end of the day.",
+      photos: ['photos/day33-target-respawner-deadzone.gif'],
+      photoCaptions: ['Target respawner with gravity + deadzone game-over logging']
+    };
+  }
+  if (dayNum === 36) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Worked on the background, got the tiles properly arranged, and spent some time cleaning up the code so it's more presentable — less a feature day, more a tidying-up day.",
+      photos: ['photos/day36-background-tiles.gif'],
+      photoCaptions: ['Background and tiles arranged, code cleaned up']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
