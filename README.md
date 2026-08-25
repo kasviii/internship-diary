@@ -1,8 +1,10 @@
 # Internship Journey — Food Sort Frenzy → Forest Warrior
 
 - ▶ **Play the game:** https://kasviii.itch.io/forest-warrior
+- ▶ **Play the game:** 
 - 💻 **Game repo:** https://github.com/kasviii/2D-game/tree/main
 - 💻 **Game repo:** https://github.com/kasviii/FoodSortFrenzy
+- 💻 **Game repo:** 
 - 📔 **Full diary:** https://kasviii.github.io/internship-diary/
 
 ## What this is
