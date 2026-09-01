@@ -838,6 +838,39 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 37) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Set up the UI elements — wrote the UI script that drives score, timer, and ammo, and arranged and placed everything on screen so it actually reads as a HUD instead of loose text floating around.",
+      photos: ['photos/day37-ui-hud.png', 'photos/day37-ui-script.png'],
+      photoCaptions: ['Score, ammo, and timer arranged into a real HUD', 'UI.cs — the script actually driving it']
+    };
+  }
+  if (dayNum === 38) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Built the game over UI and the restart flow — a run now actually ends with a \"Try again!\" button instead of just leaving the player stuck on a dead screen.",
+      photos: ['photos/day38-restart-button.png'],
+      photoCaptions: ['Game over screen with a working Try Again button']
+    };
+  }
+  if (dayNum === 39) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Set up quick time events today — no visuals worth screenshotting yet, mostly getting the underlying system working before it's tied to anything visible.",
+      photos: [], photoCaptions: []
+    };
+  }
+  if (dayNum === 40) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'surprised',
+      note: "Showed my supervisor where things stood. One piece of feedback that stuck: the game has zero audio right now — no sound effects for shooting, hits, or game over — and that's cheap to add relative to how much feedback it'd give the player. Worth doing before calling this fully finished. Deployed to itch.io either way, same as last time.",
+      links: [{ label: '▶ Play oniononon', url: 'https://kasviii.itch.io/oniononon' }],
+      photos: ['photos/day40-oniononon-playthrough.gif'],
+      photoCaptions: ['Full playthrough, start to finish']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
