@@ -866,8 +866,26 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'surprised',
       note: "Showed my supervisor where things stood. One piece of feedback that stuck: the game has zero audio right now — no sound effects for shooting, hits, or game over — and that's cheap to add relative to how much feedback it'd give the player. Worth doing before calling this fully finished. Deployed to itch.io either way, same as last time.",
       links: [{ label: '▶ Play oniononon', url: 'https://kasviii.itch.io/oniononon' }],
-      photos: ['photos/day40-oniononon-playthrough.mp4'],
+      photos: ['photos/day40-oniononon-playthrough.gif'],
       photoCaptions: ['Full playthrough, start to finish']
+    };
+  }
+
+  if (dayNum === 50) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Started on the third and final game. Decided on a direction — a kitchen/cooking setup this time, loosely following a tutorial for structure rather than copying it outright. Spent the rest of the day on post-processing and importing the assets to actually build it with.",
+      photos: ['photos/day50-game3-kitchen-start.png'],
+      photoCaptions: ['Game 3 — first assets in, counters and character placed']
+    };
+  }
+
+  if (dayNum === 51) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Full day. Built the character controller along with the visual rotation and the code behind it, then got idle and walk animations hooked up to it properly. Used Cinemachine for the first time to handle the camera instead of hand-rolling it. Refactored the input system after that, and started on collision detection right at the end before calling it a day.",
+      photos: ['photos/day51-character-controller.gif', 'photos/day51-animator-setup.png', 'photos/day51-cinemachine-input.png'],
+      photoCaptions: ['Character controller + rotation in motion', 'Idle/walk animator setup', 'Cinemachine camera + refactored input, first pass']
     };
   }
 
