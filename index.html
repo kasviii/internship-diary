@@ -889,6 +889,31 @@ function buildDay(i) {
     };
   }
 
+  if (dayNum === 52) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Some debugging first, then into the actual work: kitchen counters, then the interact action, which meant learning and using C# events for the first time. Wrote a new script, SelectedCounterVisuals, and picked up the singleton pattern along the way. Ended the day spawning kitchen objects — starting with tomatoes — backed by scriptable objects instead of hardcoded data.",
+      photos: ['photos/day52-player-script.png', 'photos/day52-counters-scene.png', 'photos/day52-prefabs-hierarchy.png'],
+      photoCaptions: ['Interact logic + C# events in Player.cs', 'Counters in the scene', 'Kitchen object prefabs taking shape']
+    };
+  }
+  if (dayNum === 53) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Built the kitchen object parent to get the clear counter's functionality actually working, then moved on to player pickup — which meant learning C# interfaces to make that work cleanly. Also talked through and understood the idea of a base counter prefab: a blueprint other counter types can inherit from instead of rebuilding shared behavior every time.",
+      photos: ['photos/day53-clearcounter-inspector.png', 'photos/day53-kitchenobject-holdpoint.png'],
+      photoCaptions: ['ClearCounter set up with its kitchen object reference', 'KitchenObjectHoldPoint added to the player']
+    };
+  }
+  if (dayNum === 54) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Implemented the base counter prefab from yesterday's discussion, then built another counter on top of it — the container counter, with its own script and prefab. Went with inheritance over an interface for this one, mostly for the flexibility, and ironically also for the rigidity: it forces every counter type to follow the same rules the base counter sets up. Did some code refactoring after that, then finished the day on player pickup and drop.",
+      photos: ['photos/day54-containercounter-hierarchy.png', 'photos/day54-pickup-drop-1.png', 'photos/day54-pickup-drop-2.png'],
+      photoCaptions: ['Container counter built on the base counter prefab', 'Picking an object up', 'Dropping it back onto a counter']
+    };
+  }
+
   if (dayNum >= 43 && dayNum <= 48) { // July 13 - July 18
     return {
       date: d, label: formatLong(d), dayNum, mood: 'default',
