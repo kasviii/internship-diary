@@ -866,7 +866,7 @@ function buildDay(i) {
       date: d, label: formatLong(d), dayNum, mood: 'surprised',
       note: "Showed my supervisor where things stood. One piece of feedback that stuck: the game has zero audio right now — no sound effects for shooting, hits, or game over — and that's cheap to add relative to how much feedback it'd give the player. Worth doing before calling this fully finished. Deployed to itch.io either way, same as last time.",
       links: [{ label: '▶ Play oniononon', url: 'https://kasviii.itch.io/oniononon' }],
-      photos: ['photos/day40-oniononon-playthrough.gif'],
+      photos: ['photos/day40-oniononon-playthrough.mp4'],
       photoCaptions: ['Full playthrough, start to finish']
     };
   }
@@ -911,6 +911,53 @@ function buildDay(i) {
       note: "Implemented the base counter prefab from yesterday's discussion, then built another counter on top of it — the container counter, with its own script and prefab. Went with inheritance over an interface for this one, mostly for the flexibility, and ironically also for the rigidity: it forces every counter type to follow the same rules the base counter sets up. Did some code refactoring after that, then finished the day on player pickup and drop.",
       photos: ['photos/day54-containercounter-hierarchy.png', 'photos/day54-pickup-drop-1.png', 'photos/day54-pickup-drop-2.png'],
       photoCaptions: ['Container counter built on the base counter prefab', 'Picking an object up', 'Dropping it back onto a counter']
+    };
+  }
+
+  if (dayNum === 57) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Lighter start — finished the rest of the prefabs (bread, meat patty, and the others), assigned them to their KitchenObjectSOs, and gave each counter its own sprite. Spent a bit just testing that everything actually looked right together. Then moved to a new counter: the cutting counter — take something like a tomato there, do a secondary interaction, and it turns into a cut-up version. Built a cutting recipe scriptable object so each ingredient defines its own cut result, added a cutting progress bar for whatever's being chopped, and finished the day by attaching the cutting-board knife animation.",
+      photos: ['photos/day57-prefabs-sprites.png', 'photos/day57-cutting-counter-1.png', 'photos/day57-cutting-counter-2.png'],
+      photoCaptions: ['All counters with real sprites, testing the layout', 'Cutting counter — tomato in place', 'Cutting counter with the knife animation attached']
+    };
+  }
+
+  if (dayNum === 58) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Added a look-at-camera script so progress bars actually face the camera instead of being flat billboards pointing the wrong way. Then a run of new counters: the trash counter, for discarding stuff like burnt meat; the stove counter, which cooks uncooked meat and burns it if it's left on too long; and the plates counter, which spawns plates you can use to pick things up. Hit a visual-position bug on the plates counter that stumped me for a genuinely painful few hours. Once that was sorted, wrote the script to stack and pick up plates, then got ingredients actually stacking on a plate — and put together an actual burger by the end of the day.",
+      photos: ['photos/day58-trash-stove-counters.png', 'photos/day58-plates-counter.png', 'photos/day58-plate-stacking.png', 'photos/day58-burger-assembled.png'],
+      photoCaptions: ['Trash and stove counters in the layout', 'Plates counter — right before the visual-position bug', 'Plate stacking working', 'First full burger assembled on a plate']
+    };
+  }
+  if (dayNum === 59) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Gave the plate/player an icon UI so it's actually visible what ingredients are currently on them. Built the delivery counter next — and since every counter now exists as a prefab and a script, that meant the full kitchen layout/map was finally complete. Used shader graph for the first time after that, then built the delivery manager, which takes finished dishes off the player's hands and checks them against what's actually being ordered.",
+      photos: ['photos/day59-kitchen-layout-complete.png', 'photos/day59-shader-graph.png'],
+      photoCaptions: ['Full kitchen layout complete — every counter in place', 'First time in Shader Graph']
+    };
+  }
+
+  if (dayNum === 60) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'default',
+      note: "Big catch-up day. Built the DeliveryManagerUI and its script so incoming recipes actually show on screen. Worked on background music and audio, then sound effects — genuinely fun stuff after a lot of system-building. Built the game start UI, then the game over UI to go with it. Moved on to the main menu and loading page and got them coordinating properly with the rest of the flow. Then the pause button, options with real audio level controls, and a handful of other small but necessary pieces that don't fit neatly under one heading.",
+      photos: ['photos/day60-delivery-manager-ui.png', 'photos/day60-game-over-ui.png', 'photos/day60-main-menu.png'],
+      photoCaptions: ['Delivery manager UI — recipes waiting', 'Game over screen with recipes delivered', 'Main menu, coordinated with the rest of the flow']
+    };
+  }
+  if (dayNum === 61) {
+    return {
+      date: d, label: formatLong(d), dayNum, mood: 'surprised',
+      note: "That's a wrap. Final GitHub commits, final notes, and deployment — and I'm done. Three games, three very different lessons, in one internship.",
+      links: [
+        { label: '▶ Play kitchenen', url: 'https://kasviii.itch.io/kitchenen' },
+        { label: '💻 Game repo', url: 'https://github.com/kasviii/kitchenen' }
+      ],
+      photos: ['photos/day61-options-pause-ui.png'],
+      photoCaptions: ['Options/pause UI — the last piece before shipping']
     };
   }
 
