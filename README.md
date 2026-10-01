@@ -2,9 +2,11 @@
 
 - ▶ **Play the game:** https://kasviii.itch.io/forest-warrior
 - ▶ **Play the game:** https://kasviii.itch.io/oniononon
+- ▶ **Play the game:**https://kasviii.itch.io/kitchenen
 - 💻 **Game repo:** https://github.com/kasviii/2D-game/tree/main
 - 💻 **Game repo:** https://github.com/kasviii/FoodSortFrenzy
 - 💻 **Game repo:** https://github.com/kasviii/oniononongame
+- 💻 **Game repo:** https://github.com/kasviii/kitchenen
 - 📔 **Full diary:** https://kasviii.github.io/internship-diary/
 
 ## What this is
